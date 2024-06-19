@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library System</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to Al-Jannahtul Firdaus Library</h1>
+        <hr>
+        <h2>Choose an operation:</h2>
+        <div class="operations">
+            <button onclick="showSearch()">Search for a book by title</button>
+            <button onclick="showReplace()">Replace a substring in a book title</button>
+            <button onclick="showUpdate()">Update book information</button>
+            <button onclick="exitLibrary()">Exit</button>
+        </div>
+        <div id="output"></div>
+    </div>
+
+    <script>
+        const books = {
+            "Linux Essentials Second Edition": {
+                "Author": "Christine Bresnahan and Richard Blum",
+                "Price": 187.00,
+                "ISBN": "978-1119092063",
+                "LibraryCode": "LIB1001",
+                "DateOfPublish": "2015-12-14",
+                "Category": "Technology",
+                "Publisher": "Wiley, John & Sons, Inc.",
+                "Language": "English",
+                "Pages": 408
+            },
+            "Electroshock: Healing Mental Illness": {
+                "Author": "Max Fink",
+                "Price": 149.92,
+                "ISBN": "978-0199989082",
+                "LibraryCode": "LIB1002",
+                "DateOfPublish": "2009-09-01",
+                "Category": "Health",
+                "Publisher": "Oxford University Press",
+                "Language": "English",
+                "Pages": 208
+            },
+            "Building a Cisco Wireless Lan": {
+                "Author": "Syngress",
+                "Price": 328.72,
+                "ISBN": "978-1928994482",
+                "LibraryCode": "LIB1003",
+                "DateOfPublish": "2001-05-10",
+                "Category": "Technology",
+                "Publisher": "Syngress Publishing, Inc.",
+                "Language": "English",
+                "Pages": 600
+            },
+            "Chef's Cuisine": {
+                "Author": "Effalee",
+                "Price": 40.00,
+                "ISBN": "978-9672660231",
+                "LibraryCode": "LIB1004",
+                "DateOfPublish": "2022-03-23",
+                "Category": "Novel",
+                "Publisher": "Manes Wordworks",
+                "Language": "Malay/English",
+                "Pages": 520
+            },
+            "Klara and the Sun": {
+                "Author": "Kazuo Ishiguro",
+                "Price": 57.95,
+                "ISBN": "978-0593318171",
+                "LibraryCode": "LIB1005",
+                "DateOfPublish": "2021-03-02",
+                "Category": "Fiction",
+                "Publisher": "Alfred A. Knopf, Inc.",
+                "Language": "English",
+                "Pages": 320
+            },
+            "The Night Circus": {
+                "Author": "Erin Morgenstern",
+                "Price": 60.63,
+                "ISBN": "978-0307744432",
+                "LibraryCode": "LIB1006",
+                "DateOfPublish": "2012-07-03",
+                "Category": "Fantasy",
+                "Publisher": "Anchor",
+                "Language": "English",
+                "Pages": 528
+            },
+            "Educated": {
+                "Author": "Tara Westover",
+                "Price": 62.91,
+                "ISBN": "978-0399590504",
+                "LibraryCode": "LIB1007",
+                "DateOfPublish": "2018-02-20",
+                "Category": "Memoir",
+                "Publisher": "Random House",
+                "Language": "English",
+                "Pages": 352
+            },
+            "The Shadow of the Wind": {
+                "Author": "Carlos Ruiz Zafon",
+                "Price": 49.45,
+                "ISBN": "978-0143126393",
+                "LibraryCode": "LIB1008",
+                "DateOfPublish": "2005-01-25",
+                "Category": "Fiction",
+                "Publisher": "Penguin Books",
+                "Language": "English",
+                "Pages": 487
+            },
+            "Dune": {
+                "Author": "Frank Herbert",
+                "Price": 51.95,
+                "ISBN": "978-0441013593",
+                "LibraryCode": "LIB1009",
+                "DateOfPublish": "2005-08-02",
+                "Category": "Science Fiction",
+                "Publisher": "Chilton Books",
+                "Language": "English",
+                "Pages": 896
+            },
+            "All the Light We Cannot See": {
+                "Author": "Anthony Doerr",
+                "Price": 85.00,
+                "ISBN": "978-1501173219",
+                "LibraryCode": "LIB1010",
+                "DateOfPublish": "2017-04-04",
+                "Category": "Historical Fiction",
+                "Publisher": "Scribner",
+                "Language": "English",
+                "Pages": 531
+            }
+        };
+
+        function start(title, prefix) {
+            return title.toLowerCase().startsWith(prefix.toLowerCase());
+        }
+
+        function end(title, suffix) {
+            return title.toLowerCase().endsWith(suffix.toLowerCase());
+        }
+
+        function replace(title, oldSubstring, newSubstring) {
+            return title.replace(oldSubstring, newSubstring);
+        }
+
+        function searchBookByTitle(query) {
+            const queryLower = query.toLowerCase();
+            const matchingBooks = [];
+            for (const [title, info] of Object.entries(books)) {
+                if (title.toLowerCase().includes(queryLower) || start(title, query) || end(title, query)) {
+                    matchingBooks.push({ title, info });
+                }
+            }
+            return matchingBooks;
+        }
+
+        function printBookInfo(title, bookInfo) {
+            let bookDetails = `
+                <h3>Book Found: ${title}</h3>
+                <p>Author: ${bookInfo.Author}</p>
+                <p>Price: RM${bookInfo.Price}</p>
+                <p>ISBN: ${bookInfo.ISBN}</p>
+                <p>Library Code: ${bookInfo.LibraryCode}</p>
+                <p>Date of Publish: ${bookInfo.DateOfPublish}</p>
+                <p>Category: ${bookInfo.Category}</p>
+                <p>Publisher: ${bookInfo.Publisher}</p>
+                <p>Language: ${bookInfo.Language}</p>
+                <p>Pages: ${bookInfo.Pages}</p>
+                <hr>
+            `;
+            document.getElementById('output').innerHTML += bookDetails;
+        }
+
+        function update(title) {
+            if (title in books) {
+                let newDetails = {};
+                for (const [key, value] of Object.entries(books[title])) {
+                    let newValue = prompt(`${key} (${value}): `, value);
+                    if (newValue !== null && newValue !== "") {
+                        newDetails[key] = isNaN(newValue) ? newValue : Number(newValue);
+                    } else {
+                        newDetails[key] = value;
+                    }
+                }
+                books[title] = newDetails;
+                document.getElementById('output').innerHTML = "<p>Book information updated successfully.</p>";
+            } else {
+                document.getElementById('output').innerHTML = "<p>Book not found.</p>";
+            }
+        }
+
+        function showSearch() {
+            let query = prompt("Enter the title (or part of it): ");
+            let matching = searchBookByTitle(query);
+            document.getElementById('output').innerHTML = '';
+
+            if (matching.length > 0) {
+                matching.forEach(book => printBookInfo(book.title, book.info));
+            } else {
+                document.getElementById('output').innerHTML = "<p>Book not found.</p>";
+            }
+        }
+
+        function showReplace() {
+            let search = prompt("Enter the book title (or part of it): ");
+            let oldSubstring = prompt("Enter the substring to replace: ");
+            let newSubstring = prompt("Enter the new substring: ");
+            let matching = searchBookByTitle(search);
+            document.getElementById('output').innerHTML = '';
+
+            if (matching.length > 0) {
+                matching.forEach(book => {
+                    const newTitle = replace(book.title, oldSubstring, newSubstring);
+                    books[newTitle] = books[book.title];
+                    delete books[book.title];
+                    document.getElementById('output').innerHTML += `<p>Title updated to: ${newTitle}</p>`;
+                });
+            } else {
+                document.getElementById('output').innerHTML = "<p>Book not found.</p>";
+            }
+        }
+
+        function showUpdate() {
+            let title = prompt("Enter the book title to update (full title): ");
+            update(title);
+        }
+
+        function exitLibrary() {
+            document.getElementById('output').innerHTML = "<p>Thank you for using our library system. Goodbye!</p>";
+        }
+    </script>
+</body>
+</html>
